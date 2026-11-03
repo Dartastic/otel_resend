@@ -1,18 +1,21 @@
-// Licensed under the Dartastic Pro Software License Agreement.
+// Licensed under the Apache License, Version 2.0
 // Copyright 2025-2026 Mindful Software LLC d/b/a Dartastic.io, All rights reserved.
 
-import 'package:dartastic_opentelemetry/dartastic_opentelemetry.dart';
+import 'package:dartastic_opentelemetry_api/dartastic_opentelemetry_api.dart';
 
 import 'otel_resend_suppression.dart';
 
 const _tracerName = 'dartastic_otel_libs_resend';
 const _systemValue = 'resend';
 
-Tracer _tracer() => OTel.tracerProvider().getTracer(_tracerName);
+APITracer _tracer() => OTelAPI.tracerProvider().getTracer(_tracerName);
 
 /// Pair returned from `tracedResendSend` callback.
 class ResendSendResult<T> {
+  /// Creates a result.
   const ResendSendResult({required this.value, this.emailId});
+
+  /// The value returned to the caller.
   final T value;
   final String? emailId;
 }
@@ -45,21 +48,21 @@ Future<T> tracedResendSend<T>({
   final span = _tracer().startSpan(
     'resend send',
     kind: SpanKind.client,
-    attributes: OTel.attributesFromMap(m),
+    attributes: OTelAPI.attributesFromMap(m),
   );
   try {
     final r = await invoke();
     if (r.emailId != null) {
-      span.addAttributes(OTel.attributes([
-        OTel.attributeString('messaging.message.id', r.emailId!),
-        OTel.attributeString('resend.email.id', r.emailId!),
+      span.addAttributes(OTelAPI.attributes([
+        OTelAPI.attributeString('messaging.message.id', r.emailId!),
+        OTelAPI.attributeString('resend.email.id', r.emailId!),
       ]));
     }
     return r.value;
   } catch (e, st) {
-    span.addAttributes(OTel.attributes([
-      OTel.attributeString(
-        ErrorResource.errorType.key,
+    span.addAttributes(OTelAPI.attributes([
+      OTelAPI.attributeString(
+        ErrorAttributes.errorType.key,
         e.runtimeType.toString(),
       ),
     ]));
