@@ -2,7 +2,7 @@ name: otel_resend
 description: >-
   OpenTelemetry instrumentation for resend by Dartastic.io. Adds standard
   OpenTelemetry observability to applications that use resend.
-version: 0.1.0-wip
+version: 0.1.0
 repository: https://github.com/dartastic/otel_resend
 homepage: https://dartastic.io
 
